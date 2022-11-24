@@ -4,14 +4,14 @@ fetch("http://localhost:3000/api/products")
     .catch(error => alert('Erreur!',error))
 
 function displayProducts(products) {
-        for (product of products) {
-            const products = document.querySelector('#items').innerHTML +=    
+        products.forEach((product) => {
+            document.querySelector('#items').innerHTML +=    
                 `<a href="./product.html?id=${product._id}">
                 <article>
                     <img src="${product.imageUrl}" alt="${product.altTxt}">
                     <h3 class="productName">${product.name}</h3>
                     <p class="productDescription">${product.description}</p>
                 </article>
-                </a>`;
-            }      
-        }   
+                </a>`;            
+        })
+    }

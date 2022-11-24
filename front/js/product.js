@@ -1,8 +1,6 @@
 const str = window.location.href
-var url = new URL(str);
+const url = new URL(str);
 const id = url.searchParams.get("id");
-let color = ''
-console.log(id);
 
 fetch(`http://localhost:3000/api/products/${id}`)
     .then(response => response.json())
@@ -18,32 +16,44 @@ function displayProduct(product) {
     for (clr of product.colors) {
         const colors = document.querySelector('#colors').innerHTML += `<option value="${clr}">${clr}</option>`
     } 
-
 }
 
-/* document.querySelector('#quantity').addEventListener('change', (e) => {
-    const quantity = e.target.value
-})
-console.log(quantity) */
+const quantity = document.querySelector('#quantity').value
 
+/* const checkQuantity = () => {
 
-/* function getQuantity() {
-    const quantity = document.querySelector('#quantity').value;
-    return quantity
+    if (quantity != 0) {
+        return quantity
+    } else {
+        alert('Veuillez selectionner une quantité')
+    }
 } */
-
-/* function getColor() {
-    const color = document.querySelector('#colors').value;
+    
+/* }
+const quantity = 0
+document.querySelector('#quantity').addEventListener('change', (e) => {
+    const quantity = e.target.value
+    return quantity
+    console.log(quantity)
+})
+const color = ''
+document.querySelector('#colors').addEventListener('change', (e) => {
+    const color = e.target.value
     return color
-}
+    console.log(color)
+})
 
-const addProduct = {
-    _id : id,
-    _quantity : quantity,
-    _color : color,
-}
 
-console.log(addProduct) */
+document.querySelector('#addToCart').addEventListener('click', addProductToCart) 
+    function addProductToCart(){
+        const addProduct = {
+            _id : id,
+            _quantity : quantity,
+            _color : color,
+        }
+        console.log(addProduct)
+    }
+ */
 /* const addInCart = JSON.stringify(addProduct);
 localStorage.setItem("obj",addInCart);
 console.log(addInCart) */
