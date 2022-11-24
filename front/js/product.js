@@ -18,52 +18,50 @@ function displayKanap(kanap) {
     } 
 }
 
-function addInCart(){
-    let cart = {
+function saveCart(cart){
+    localStorage.setItem("cart", JSON.stringify(cart))
+    alert('Produit ajouté au panier')
+}
+function addKanap(){
+    let kanap = {
         _id : id,
-        _quantity : document.querySelector('#quantity').value,
+        _quantity : +document.querySelector('#quantity').value,
         _color : document.querySelector('#colors').value,
     }
-    localStorage.setItem("cart", JSON.stringify(cart))
+    return kanap
 }
-document.querySelector('#addToCart').addEventListener('click', addInCart)
 
-/* }
-if (quantity != 0) {
-    return quantity
-} else {
-    alert('Veuillez selectionner une quantité')
-}
-if (color != ''){
-    return color
-} else {
-    alert('Veuillez selectionner une couleur')
-}
-const quantity = 0
-document.querySelector('#quantity').addEventListener('change', (e) => {
-    const quantity = e.target.value
-    return quantity
-    console.log(quantity)
-})
-const color = ''
-document.querySelector('#colors').addEventListener('change', (e) => {
-    const color = e.target.value
-    return color'#quantity'
-    console.log(color)
-})
-
-
-document.querySelector('#addToCart').addEventListener('click', addProductToCart) 
-    function addProductToCart(){
-        const addProduct = {
-            _id : id,
-            _quantity : quantity,
-            _color : color,
-        }
-        console.log(addProduct)
+function getCart(){
+    let cart = localStorage.getItem('cart')
+    if (cart == null){
+        return []
+    } else {
+        return JSON.parse(cart)
     }
- */
-/* const addInCart = JSON.stringify(addProduct);
-localStorage.setItem("obj",addInCart);
-console.log(addInCart) */
+}
 
+function checkKanapInCart(){
+    let cart = getCart()
+    let foundkanap = cart.find(k => k._id == id && k._color == document.querySelector('#colors').value)
+    if (foundkanap != undefined){
+        foundkanap._quantity = +foundkanap._quantity + +document.querySelector('#quantity').value
+    } else {
+        let kanap = {
+            _id : id,
+            _quantity : document.querySelector('#quantity').value,
+            _color : document.querySelector('#colors').value,
+        }
+        cart.push(kanap)
+    }
+     saveCart(cart)
+}
+
+function addInCart(){
+    if ((document.querySelector('#quantity').value != 0) && (document.querySelector('#colors').value != '')){
+        checkKanapInCart()
+    }else {
+        alert('Veuillez selectionner une couleur et une quantité')
+    }
+} 
+
+document.querySelector('#addToCart').addEventListener('click', addInCart) 
