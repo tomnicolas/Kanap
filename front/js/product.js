@@ -4,32 +4,41 @@ const id = url.searchParams.get("id");
 
 fetch(`http://localhost:3000/api/products/${id}`)
     .then(response => response.json())
-    .then(product => displayProduct(product))
+    .then(kanap => displayKanap(kanap))
     .catch(error => alert('Erreur!',error))
 
 
-function displayProduct(product) {
-    const img = document.querySelector('.item__img').innerHTML = `<img src="${product.imageUrl}" alt="${product.altTxt}"></img>`
-    const title = document.querySelector('#title').textContent = `${product.name}`
-    const price = document.querySelector('#price').textContent = `${product.price}`
-    const description = document.querySelector('#description').textContent = `${product.description}`
-    for (clr of product.colors) {
+function displayKanap(kanap) {
+    const img = document.querySelector('.item__img').innerHTML = `<img src="${kanap.imageUrl}" alt="${kanap.altTxt}"></img>`
+    const title = document.querySelector('#title').textContent = `${kanap.name}`
+    const price = document.querySelector('#price').textContent = `${kanap.price}`
+    const description = document.querySelector('#description').textContent = `${kanap.description}`
+    for (clr of kanap.colors) {
         const colors = document.querySelector('#colors').innerHTML += `<option value="${clr}">${clr}</option>`
     } 
 }
 
-const quantity = document.querySelector('#quantity').value
-
-/* const checkQuantity = () => {
-
-    if (quantity != 0) {
-        return quantity
-    } else {
-        alert('Veuillez selectionner une quantité')
+function addInCart(){
+    let cart = {
+        _id : id,
+        _quantity : document.querySelector('#quantity').value,
+        _color : document.querySelector('#colors').value,
     }
-} */
-    
+    localStorage.setItem("cart", JSON.stringify(cart))
+}
+document.querySelector('#addToCart').addEventListener('click', addInCart)
+
 /* }
+if (quantity != 0) {
+    return quantity
+} else {
+    alert('Veuillez selectionner une quantité')
+}
+if (color != ''){
+    return color
+} else {
+    alert('Veuillez selectionner une couleur')
+}
 const quantity = 0
 document.querySelector('#quantity').addEventListener('change', (e) => {
     const quantity = e.target.value
@@ -39,7 +48,7 @@ document.querySelector('#quantity').addEventListener('change', (e) => {
 const color = ''
 document.querySelector('#colors').addEventListener('change', (e) => {
     const color = e.target.value
-    return color
+    return color'#quantity'
     console.log(color)
 })
 

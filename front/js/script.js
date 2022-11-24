@@ -1,16 +1,16 @@
 fetch("http://localhost:3000/api/products")
     .then(response => response.json())
-    .then(products => displayProducts(products))
+    .then(kanaps => displayKanaps(kanaps))
     .catch(error => alert('Erreur!',error))
 
-function displayProducts(products) {
-        products.forEach((product) => {
+function displayKanaps(kanaps) {
+        kanaps.forEach((kanap) => {
             document.querySelector('#items').innerHTML +=    
-                `<a href="./product.html?id=${product._id}">
+                `<a href="./product.html?id=${kanap._id}">
                 <article>
-                    <img src="${product.imageUrl}" alt="${product.altTxt}">
-                    <h3 class="productName">${product.name}</h3>
-                    <p class="productDescription">${product.description}</p>
+                    <img src="${kanap.imageUrl}" alt="${kanap.altTxt}">
+                    <h3 class="productName">${kanap.name}</h3>
+                    <p class="productDescription">${kanap.description}</p>
                 </article>
                 </a>`;            
         })
