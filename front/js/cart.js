@@ -1,7 +1,8 @@
-let cart = JSON.parse(localStorage.getItem('cart'))
 let productdt
+let cart
 
-async function getProductsData(cart){
+async function getProductsData(){
+	let cart = JSON.parse(localStorage.getItem('cart'))
 	for (let product of cart){
 		await fetch(`http://localhost:3000/api/products/${product._id}`)
 			.then(res => res.json())
@@ -17,7 +18,6 @@ async function getProductsData(cart){
 	}
 
 getProductsData(cart)
-
 
 function displayProductsInCart(product){
 	document.querySelector('#cart__items').innerHTML +=   
@@ -43,3 +43,24 @@ function displayProductsInCart(product){
 		</div>
  	</article>`;
 }
+
+function changeQuantityProductInCart(){
+    let cart = JSON.parse(localStorage.getItem('cart'))  
+	let el = document.querySelectorAll(".cart__item")
+    let foundproduct = cart.find(k => k.id == el.dataset.id && k.color == el.dataset.color)
+    foundproduct.quantity = document.querySelector('.itemQuantity').value
+	localStorage.setItem("cart", JSON.stringify(cart))
+    alert('Quantité modifié')
+}
+
+document.querySelectorAll(".cart__item").addEventListener('change', changeQuantityProductInCart()) 
+
+// change quantity
+// listen change
+// push cart
+// call getproductdatas()
+
+// bouton supprimer
+// delete object 
+// push cart
+// call getproductdatas()
