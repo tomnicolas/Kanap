@@ -3,20 +3,20 @@
 //send it to displayKanap()
 //if failed, display an alert 'error'
 fetch("http://localhost:3000/api/products")
-    .then(response => response.json())
-    .then(kanaps => displayKanaps(kanaps))
+    .then(res => res.json())
+    .then(products => displayKanaps(products))
     .catch(error => alert('Erreur!',error))
 
 
 // Generate HTML code displaying all the informations, for each product in API
-function displayKanaps(kanaps) {
-        kanaps.forEach((kanap) => {
+function displayKanaps(products) {
+        products.forEach((product) => {
             document.querySelector('#items').innerHTML +=    
-                `<a href="./product.html?id=${kanap._id}">
+                `<a href="./product.html?id=${product._id}">
                 <article>
-                    <img src="${kanap.imageUrl}" alt="${kanap.altTxt}">
-                    <h3 class="productName">${kanap.name}</h3>
-                    <p class="productDescription">${kanap.description}</p>
+                    <img src="${product.imageUrl}" alt="${product.altTxt}">
+                    <h3 class="productName">${product.name}</h3>
+                    <p class="productDescription">${product.description}</p>
                 </article>
                 </a>`;            
         })
