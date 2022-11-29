@@ -9,36 +9,25 @@ let totalProducts
 function getCart(){
     let cart = localStorage.getItem('cart')
     if (cart == null){
-		alert('Votre panier est vide')
         return []
     } else {
         return JSON.parse(cart)
     }
 }
 
-function saveCart(cart) {
-	localStorage.setItem("cart", JSON.stringify(cart))
-}
-
-function changeQuantity(product, quantity) {
+function changeQuantity(id, color, quantity) {
 	let cart = getCart();
-	let productFound = cart.find((p) => p._color == product);
-	if (productFound != undefined) {
-		productFound.quantity = quantity;
-		if (quantity <= 0) {
-			deleteProduct(product);
-		} else {
-			saveCart(cart);
-		}
-	}
+	let foundproduct = cart.find((p) => p._color == color && p._id == id);
+	foundproduct._quantity = quantity;
+	localStorage.setItem("cart", JSON.stringify(cart))
 	window.location.reload()
 }
 
 function deleteProduct(id, color) {
 	let cart = getCart();
-	console.log(id,color)
 	cart = cart.filter((p) => p._color !== color || p._id !== id);
-	saveCart(cart);
+	localStorage.setItem("cart", JSON.stringify(cart))
+	alert('Produit supprimer!')
 	window.location.reload()
 }
 
@@ -65,11 +54,6 @@ async function getProductsData(product) {
 	displayProductInCart(productdt)
 	addEvents()
 }
-
-function completeCart() {
-	let cart = getCart()
-	cart.forEach(product => getProductsData(product))
-}  
 
 function displayProductInCart(product){	
 	document.querySelector('#cart__items').innerHTML +=   
@@ -99,22 +83,27 @@ function displayProductInCart(product){
 }
 
 function addEvents() {
-	//delete button
 	const delButtons = document.querySelectorAll(".deleteItem")
 	delButtons.forEach((btn) => {
 		btn.addEventListener("click", () => {
 			deleteProduct(btn.closest("article").getAttribute("data-id"),
 			btn.closest("article").getAttribute("data-color"))
 	})
-})
-  
-	const QtyFields = document.querySelectorAll(".itemQuantity")
-	QtyFields.forEach((field) => {
-	  	field.addEventListener("change", () => {
-			changeQuantity(field.closest("article").getAttribute("data-id"),field.value);
+})  
+	const quantityButton = document.querySelectorAll(".itemQuantity")
+	quantityButton.forEach((quantity) => {
+	  	quantity.addEventListener("change", () => {
+			changeQuantity(quantity.closest("article").getAttribute("data-id"),
+			quantity.closest("article").getAttribute("data-color"),
+			quantity.value);
 	  })
 	})
 }
+
+function completeCart() {
+	let cart = getCart()
+	cart.forEach(product => getProductsData(product))
+}  
 
 window.addEventListener("load", (e) => {
 	completeCart();
