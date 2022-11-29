@@ -49,7 +49,7 @@ function getCart(){
 // reset the cart in localstorage and display an alert to validate product add to cart
 function checkProductInCart(){
     let cart = getCart()    
-    let foundproduct = cart.find(k => k._id == id && k._color == document.querySelector('#colors').value)
+    let foundproduct = cart.find(p => p._id == id && p._color == document.querySelector('#colors').value)
     if (foundproduct != undefined){
         foundproduct._quantity = +foundproduct._quantity + +document.querySelector('#quantity').value
     } else {
