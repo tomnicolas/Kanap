@@ -86,25 +86,53 @@ function addEvents() {
 	const delButtons = document.querySelectorAll(".deleteItem")
 	delButtons.forEach((btn) => {
 		btn.addEventListener("click", () => {
-			deleteProduct(btn.closest("article").getAttribute("data-id"),
-			btn.closest("article").getAttribute("data-color"))
-	})
-})  
+			deleteProduct(
+				btn.closest("article").getAttribute("data-id"),
+				btn.closest("article").getAttribute("data-color"))
+		})
+	})  
 	const quantityButton = document.querySelectorAll(".itemQuantity")
 	quantityButton.forEach((quantity) => {
 	  	quantity.addEventListener("change", () => {
-			changeQuantity(quantity.closest("article").getAttribute("data-id"),
-			quantity.closest("article").getAttribute("data-color"),
-			quantity.value);
-	  })
+			changeQuantity(
+				quantity.closest("article").getAttribute("data-id"),
+				quantity.closest("article").getAttribute("data-color"),
+				quantity.value);
+	  	})
 	})
 }
 
-function completeCart() {
+window.addEventListener("load", (e) => {
 	let cart = getCart()
 	cart.forEach(product => getProductsData(product))
-}  
-
-window.addEventListener("load", (e) => {
-	completeCart();
 })
+
+// FORM  -------------------------------------------------------
+
+let regexName = /^[A-Za-zÀ-ÿ]+$/
+let regexAdress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
+let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
+let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+
+function firstNameValidation(){
+	if (!regexName.test(document.getElementById("firstName").value)) {
+		document.getElementById("firstNameErrorMsg").innerText = 'Ce champ ne doit contenir que des lettres'
+		return false
+	}
+	else {
+		document.getElementById("firstNameErrorMsg").innerText = ''
+		return document.getElementById("firstName").value
+	}
+}
+document.getElementById("firstName").addEventListener('change', firstNameValidation)
+
+function submitForm() {
+	if (firstNameValidation() !== false){
+		alert('youpi')
+	} else {
+		alert('oups')
+	}
+}
+
+document.getElementById("order").addEventListener('click', submitForm)
+
