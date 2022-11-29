@@ -126,9 +126,57 @@ function firstNameValidation(){
 }
 document.getElementById("firstName").addEventListener('change', firstNameValidation)
 
+function lastNameValidation(){
+	if (!regexName.test(document.getElementById("lastName").value)) {
+		document.getElementById("lastNameErrorMsg").innerText = 'Ce champ ne doit contenir que des lettres'
+		return false
+	}
+	else {
+		document.getElementById("lastNameErrorMsg").innerText = ''
+		return document.getElementById("lastName").value
+	}
+}
+document.getElementById("lastName").addEventListener('change', lastNameValidation)
+
+function addressValidation(){
+	if (!regexAdress.test(document.getElementById("address").value)) {
+		document.getElementById("addressErrorMsg").innerText = 'Veuillez entrer une adresse valide'
+		return false
+	}
+	else {
+		document.getElementById("addressErrorMsg").innerText = ''
+		return document.getElementById("address").value
+	}
+}
+document.getElementById("address").addEventListener('change', addressValidation)
+
+function cityValidation(){
+	if (!regexCity.test(document.getElementById("city").value)) {
+		document.getElementById("cityErrorMsg").innerText = 'Veuillez entrer un nom de ville valide'
+		return false
+	}
+	else {
+		document.getElementById("cityErrorMsg").innerText = ''
+		return document.getElementById("city").value
+	}
+}
+document.getElementById("city").addEventListener('change', cityValidation)
+
+function emailValidation(){
+	if (!regexEmail.test(document.getElementById("email").value)) {
+		document.getElementById("emailErrorMsg").innerText = 'Veuillez entrer un email valide'
+		return false
+	}
+	else {
+		document.getElementById("emailErrorMsg").innerText = ''
+		return document.getElementById("email").value
+	}
+}
+document.getElementById("email").addEventListener('change', emailValidation)
+
 function submitForm() {
-	if (firstNameValidation() !== false){
-		alert('youpi')
+	if (firstNameValidation(),lastNameValidation(),addressValidation(),emailValidation(),cityValidation() !== false){
+		//crée un object et l'envoi POST dans LS
 	} else {
 		alert('oups')
 	}
