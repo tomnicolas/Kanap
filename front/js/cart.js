@@ -109,72 +109,29 @@ window.addEventListener("load", (e) => {
 	cart.forEach(product => getProductsData(product))
 })
 
-// FORM  -------------------------------------------------------
+// ORDER  -------------------------------------------------------
 
 let regexName = /^[A-Za-zÀ-ÿ]+$/
 let regexAddress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
 let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
 let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
 
-function firstNameValidation(){
-	if (!regexName.test(document.getElementById("firstName").value)) {
-		document.getElementById("firstNameErrorMsg").innerText = 'Ce champ ne doit contenir que des lettres'
+function fieldValidation(field, regex, text, evt){
+	if (!regex.test(document.getElementById(field).value)) {
+		document.getElementById(`${field}ErrorMsg`).innerText = `Veuillez entrer ${text} valide`
 		return false
 	}
 	else {
-		document.getElementById("firstNameErrorMsg").innerText = ''
-		return document.getElementById("firstName").value
+		document.getElementById(`${field}ErrorMsg`).innerText = ''
+		return document.getElementById(field).value
 	}
 }
-document.getElementById("firstName").addEventListener('change', firstNameValidation)
 
-function lastNameValidation(){
-	if (!regexName.test(document.getElementById("lastName").value)) {
-		document.getElementById("lastNameErrorMsg").innerText = 'Ce champ ne doit contenir que des lettres'
-		return false
-	}
-	else {
-		document.getElementById("lastNameErrorMsg").innerText = ''
-		return document.getElementById("lastName").value
-	}
-}
-document.getElementById("lastName").addEventListener('change', lastNameValidation)
-
-function addressValidation(){
-	if (!regexAddress.test(document.getElementById("address").value)) {
-		document.getElementById("addressErrorMsg").innerText = 'Veuillez entrer une adresse valide'
-		return false
-	}
-	else {
-		document.getElementById("addressErrorMsg").innerText = ''
-		return document.getElementById("address").value
-	}
-}
-document.getElementById("address").addEventListener('change', addressValidation)
-
-function cityValidation(){
-	if (!regexCity.test(document.getElementById("city").value)) {
-		document.getElementById("cityErrorMsg").innerText = 'Veuillez entrer un nom de ville valide'
-		return false
-	}
-	else {
-		document.getElementById("cityErrorMsg").innerText = ''
-		return document.getElementById("city").value
-	}
-}
-document.getElementById("city").addEventListener('change', cityValidation)
-
-function emailValidation(){
-	if (!regexEmail.test(document.getElementById("email").value)) {
-		document.getElementById("emailErrorMsg").innerText = 'Veuillez entrer un email valide'
-		return false
-	}
-	else {
-		document.getElementById("emailErrorMsg").innerText = ''
-		return document.getElementById("email").value
-	}
-}
-document.getElementById("email").addEventListener('change', emailValidation)
+document.getElementById("firstName").addEventListener('change', (evt) => fieldValidation('firstName',regexName, 'un nom', evt))
+document.getElementById("lastName").addEventListener('change', (evt) => fieldValidation('lastName',regexName, 'un nom', evt))
+document.getElementById("address").addEventListener('change', (evt) => fieldValidation('address',regexAddress, 'une adresse', evt))
+document.getElementById("city").addEventListener('change', (evt) => fieldValidation('city',regexCity, 'une ville', evt))
+document.getElementById("email").addEventListener('change', (evt) => fieldValidation('email',regexEmail, 'un email', evt))
 
 function validationForm(){
 	if (firstNameValidation()!== false && 
@@ -217,7 +174,7 @@ function getProductsId() {
 function submitOrder() {
 	if (validationForm()) {
 		setOrder()
-		localStorage.setItem("order", JSON.stringify(setOrder()))
+		localStorage.setItem("order", JSON.stringify(setOrder))
 		fetch("http://localhost:3000/api/products/order", {
 			method: "POST",
 			headers: {
