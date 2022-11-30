@@ -115,15 +115,18 @@ let regexName = /^[A-Za-zÀ-ÿ]+$/
 let regexAddress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
 let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
 let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+let contact = {}
 
 function fieldValidation(field, regex, text, evt){
 	if (!regex.test(document.getElementById(field).value)) {
 		document.getElementById(`${field}ErrorMsg`).innerText = `Veuillez entrer ${text} valide`
-		return false
+		contact[`${field}`] = false
+		return order
 	}
 	else {
 		document.getElementById(`${field}ErrorMsg`).innerText = ''
-		return document.getElementById(field).value
+		contact[`${field}`] = document.getElementById(field).value
+		return order
 	}
 }
 
@@ -134,31 +137,20 @@ document.getElementById("city").addEventListener('change', (evt) => fieldValidat
 document.getElementById("email").addEventListener('change', (evt) => fieldValidation('email',regexEmail, 'un email', evt))
 
 function validationForm(){
-	if (firstNameValidation()!== false && 
-	lastNameValidation()!== false && 
-	addressValidation()!== false && 
-	emailValidation()!== false && 
-	cityValidation() !== false && 
-	(localStorage.getItem('cart') !== null)){	
-		return true	
+	if ((contact.length = 5) && (localStorage.getItem('cart') !== null)){			
+		if (Object.values(contact).includes(false)){
+			return false	
+		}else {
+			return true
+		}
 	} else {
 		return false
-	}
 }
-
+}
 function setOrder(){
-	let order = {
-		contact : {
-			firstName : document.getElementById("firstName").value,
-			lastName : document.getElementById("lastName").value,
-			address : document.getElementById("address").value,
-			city : document.getElementById("city").value,
-			email : document.getElementById("email").value
-		},
-		products : getProductsId()
-	}
+	order.contact = contact
+	order.products = getProductsId()
 	return order
-
 }
 
 function getProductsId() {
