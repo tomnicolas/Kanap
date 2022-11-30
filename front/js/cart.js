@@ -9,6 +9,8 @@ let totalProducts
 function getCart(){
     let cart = localStorage.getItem('cart')
     if (cart == null){
+		document.querySelector('#cart__items').innerHTML += 
+		`<p>Votre panier est vide</p>`
         return []
     } else {
         return JSON.parse(cart)
@@ -110,7 +112,7 @@ window.addEventListener("load", (e) => {
 // FORM  -------------------------------------------------------
 
 let regexName = /^[A-Za-zÀ-ÿ]+$/
-let regexAdress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
+let regexAddress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
 let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
 let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
 
@@ -139,7 +141,7 @@ function lastNameValidation(){
 document.getElementById("lastName").addEventListener('change', lastNameValidation)
 
 function addressValidation(){
-	if (!regexAdress.test(document.getElementById("address").value)) {
+	if (!regexAddress.test(document.getElementById("address").value)) {
 		document.getElementById("addressErrorMsg").innerText = 'Veuillez entrer une adresse valide'
 		return false
 	}
@@ -174,13 +176,69 @@ function emailValidation(){
 }
 document.getElementById("email").addEventListener('change', emailValidation)
 
-function submitForm() {
-	if (firstNameValidation(),lastNameValidation(),addressValidation(),emailValidation(),cityValidation() !== false){
-		//crée un object et l'envoi POST dans LS
+function validationForm(){
+	if (firstNameValidation()!== false && 
+	lastNameValidation()!== false && 
+	addressValidation()!== false && 
+	emailValidation()!== false && 
+	cityValidation() !== false && 
+	(localStorage.getItem('cart') !== null)){	
+		return true	
 	} else {
-		alert('oups')
+		return false
 	}
 }
 
-document.getElementById("order").addEventListener('click', submitForm)
+function setOrder(){
+	let order = {
+		contact : {
+			firstName : document.getElementById("firstName").value,
+			lastName : document.getElementById("lastName").value,
+			address : document.getElementById("address").value,
+			city : document.getElementById("city").value,
+			email : document.getElementById("email").value
+		},
+		products : getProductsId()
+	}
+	return order
+
+}
+
+function getProductsId() {
+	let productsId = []
+	let cart = getCart()
+	cart.forEach((product) => {
+	  	productsId.push(product._id);
+	})
+	return productsId
+  }
+  
+
+function submitOrder() {
+	if (validationForm()) {
+		setOrder()
+		localStorage.setItem("order", JSON.stringify(setOrder()))
+		fetch("http://localhost:3000/api/products/order", {
+			method: "POST",
+			headers: {
+				"content-type": "application/json",
+			},
+			body: JSON.stringify(setOrder()),
+		})
+      		.then((res) => res.json())
+      		.then((data) =>{
+				const orderId = data.orderId
+        		window.location.href ='./confirmation.html?id='+ orderId;
+      	})
+		alert('Commande validée')
+	} else {
+		if (localStorage.getItem('cart') == null){
+			alert('Votre panier est vide')
+		} else {
+			alert('Veuillez renseigner les informations demandées')
+		}
+	}
+}
+
+document.getElementById("order").addEventListener('click', submitOrder)
 
