@@ -115,17 +115,17 @@ let regexName = /^[A-Za-zÀ-ÿ]+$/
 let regexAddress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
 let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
 let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
-let contact = {}
+let contactInfos = {}
 
 function fieldValidation(field, regex, text, evt){
 	if (!regex.test(document.getElementById(field).value)) {
 		document.getElementById(`${field}ErrorMsg`).innerText = `Veuillez entrer ${text} valide`
-		contact[`${field}`] = false
+		contactInfos[`${field}`] = false
 		return order
 	}
 	else {
 		document.getElementById(`${field}ErrorMsg`).innerText = ''
-		contact[`${field}`] = document.getElementById(field).value
+		contactInfos[`${field}`] = document.getElementById(field).value
 		return order
 	}
 }
@@ -137,8 +137,8 @@ document.getElementById("city").addEventListener('change', (evt) => fieldValidat
 document.getElementById("email").addEventListener('change', (evt) => fieldValidation('email',regexEmail, 'un email', evt))
 
 function validationForm(){
-	if ((contact.length = 5) && (localStorage.getItem('cart') !== null)){			
-		if (Object.values(contact).includes(false)){
+	if ((Object.keys(contactInfos).length == 5) && (localStorage.getItem('cart') !== null)){			
+		if (Object.values(contactInfos).includes(false)){
 			return false	
 		}else {
 			return true
@@ -148,8 +148,10 @@ function validationForm(){
 }
 }
 function setOrder(){
-	order.contact = contact
-	order.products = getProductsId()
+	let order = {
+		contact: contactInfos,
+		products: getProductsId()
+	}
 	return order
 }
 
@@ -166,19 +168,19 @@ function getProductsId() {
 function submitOrder() {
 	if (validationForm()) {
 		setOrder()
-		localStorage.setItem("order", JSON.stringify(setOrder))
 		fetch("http://localhost:3000/api/products/order", {
 			method: "POST",
 			headers: {
 				"content-type": "application/json",
 			},
 			body: JSON.stringify(setOrder()),
-		})
+			})
       		.then((res) => res.json())
       		.then((data) =>{
 				const orderId = data.orderId
-        		window.location.href ='./confirmation.html?id='+ orderId;
-      	})
+        		window.location.href ='./confirmation.html?id='+ orderId;			
+      		})
+			.catch(error => alert('Erreur!',error))
 		alert('Commande validée')
 	} else {
 		if (localStorage.getItem('cart') == null){
