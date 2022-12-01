@@ -72,7 +72,7 @@ function addInCart(){
     if ((document.querySelector('#quantity').value != 0) && (document.querySelector('#colors').value != '')){
         checkProductInCart()
     }else {
-        alert('Veuillez selectionner une couleur et une quantité')
+        alert('Veuillez sélectionner une couleur et une quantité')
     }
 } 
 

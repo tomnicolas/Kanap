@@ -1,3 +1,4 @@
+// Variable declaration
 let prices = []
 let totalPrice
 let quantities = []
@@ -17,6 +18,11 @@ function getCart(){
     }
 }
 
+// Get the products in the cart to change its quantity
+// 		search for the product matching color and id
+//		when found, change the quantity
+//		send the cart back to LS
+//		relaod the page
 function changeQuantity(id, color, quantity) {
 	let cart = getCart();
 	let foundproduct = cart.find((p) => p._color == color && p._id == id);
@@ -25,6 +31,11 @@ function changeQuantity(id, color, quantity) {
 	window.location.reload()
 }
 
+// Get the products in the cart to delete it
+//		filter the cart to only keep products with different id and color
+//		send the cart back to LS
+//		display alert 
+//		relaod the page
 function deleteProduct(id, color) {
 	let cart = getCart();
 	cart = cart.filter((p) => p._color !== color || p._id !== id);
@@ -33,6 +44,15 @@ function deleteProduct(id, color) {
 	window.location.reload()
 }
 
+// Complete the products datas in the cart from the API
+//		fetch the datas from the API
+//		add it to productDt with current datas of cart
+//		push the price of the product in array "prices"
+//		send the sum of the array "prices" in totalPrices
+//		push the qauntity of the product in array "quantities"
+//		send the sum of the array "quantities" in totalProducts
+// 		call the displayProductInCart with the datas of product in param
+//		call addEvents function
 async function getProductsData(product) {
 	let datas = await fetch(`http://localhost:3000/api/products/${product._id}`)
 	.then(res => res.json())
@@ -49,14 +69,15 @@ async function getProductsData(product) {
 	}
 
 	prices.push(parseInt(productdt.quantity) * parseInt(productdt.price))
-	totalPrice = prices.reduce((a, b)=> a + b,0)
+	totalPrice = prices.reduce((a, b)=> a + b)
 	quantities.push(parseInt(productdt.quantity))
-	totalProducts = quantities.reduce((a, b)=> a + b,0)
+	totalProducts = quantities.reduce((a, b)=> a + b)
 
 	displayProductInCart(productdt)
 	addEvents()
 }
 
+// Generate HTML code displaying all the informations of the product and total price and total quantity of products
 function displayProductInCart(product){	
 	document.querySelector('#cart__items').innerHTML +=   
 	`<article class="cart__item" data-id="${product.id}" data-color="${product.color}">
@@ -84,6 +105,7 @@ function displayProductInCart(product){
 	document.getElementById("totalQuantity").innerHTML = totalProducts;
 }
 
+// Set eventlistener on delete and quantity buttons and get the id and color datas of the product 
 function addEvents() {
 	const delButtons = document.querySelectorAll(".deleteItem")
 	delButtons.forEach((btn) => {
@@ -104,49 +126,56 @@ function addEvents() {
 	})
 }
 
+// On page load, get the datas from the cart and call getProductsData for each product in the cart
 window.addEventListener("load", (e) => {
 	let cart = getCart()
 	cart.forEach(product => getProductsData(product))
 })
 
-// ORDER  -------------------------------------------------------
+// ------------------- ORDER -------------------
 
-let regexName = /^[A-Za-zÀ-ÿ]+$/
-let regexAddress = /^[0-9A-Za-zÀ-ÿ-.,' ]+$/
-let regexCity = /^[A-Za-zÀ-ÿ-',.]+$/
-let regexEmail = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+// Variables declaration
+let regex = {
+	Name: /^[A-Za-zÀ-ÿ]+$/,
+	Address: /^[0-9A-Za-zÀ-ÿ-.,' ]+$/,
+	City: /^[A-Za-zÀ-ÿ-',.]+$/,
+	Email: /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
+}
 let contactInfos = {}
 
+// Validate the field with associated regex
+// 		if error display message and push false field in contactInfos
+// 		if valide entry push entry in contactInfos
+//		return contacInfos
 function fieldValidation(field, regex, text, evt){
 	if (!regex.test(document.getElementById(field).value)) {
 		document.getElementById(`${field}ErrorMsg`).innerText = `Veuillez entrer ${text} valide`
 		contactInfos[`${field}`] = false
-		return order
 	}
 	else {
 		document.getElementById(`${field}ErrorMsg`).innerText = ''
 		contactInfos[`${field}`] = document.getElementById(field).value
-		return order
-	}
+	} 
+	return contactInfos
 }
 
-document.getElementById("firstName").addEventListener('change', (evt) => fieldValidation('firstName',regexName, 'un nom', evt))
-document.getElementById("lastName").addEventListener('change', (evt) => fieldValidation('lastName',regexName, 'un nom', evt))
-document.getElementById("address").addEventListener('change', (evt) => fieldValidation('address',regexAddress, 'une adresse', evt))
-document.getElementById("city").addEventListener('change', (evt) => fieldValidation('city',regexCity, 'une ville', evt))
-document.getElementById("email").addEventListener('change', (evt) => fieldValidation('email',regexEmail, 'un email', evt))
+// Set the eventlistener for form fields on change
+document.getElementById("firstName").addEventListener('change', (evt) => fieldValidation('firstName',regex.Name, 'un nom', evt))
+document.getElementById("lastName").addEventListener('change', (evt) => fieldValidation('lastName',regex.Name, 'un nom', evt))
+document.getElementById("address").addEventListener('change', (evt) => fieldValidation('address',regex.Address, 'une adresse', evt))
+document.getElementById("city").addEventListener('change', (evt) => fieldValidation('city',regex.City, 'une ville', evt))
+document.getElementById("email").addEventListener('change', (evt) => fieldValidation('email',regex.Email, 'une adresse email', evt))
 
+// Check if the form is complete and valide and the cart is not empty
+// 		return boolean
 function validationForm(){
-	if ((Object.keys(contactInfos).length == 5) && (localStorage.getItem('cart') !== null)){			
-		if (Object.values(contactInfos).includes(false)){
-			return false	
-		}else {
-			return true
-		}
-	} else {
-		return false
+	let res = false
+	if ((Object.keys(contactInfos).length == 5) && (localStorage.getItem('cart') !== null) && (!Object.values(contactInfos).includes(false))){
+			res = true
+	}return res
 }
-}
+
+// Set order infos (contact, cart)
 function setOrder(){
 	let order = {
 		contact: contactInfos,
@@ -155,6 +184,7 @@ function setOrder(){
 	return order
 }
 
+// Get the IDs of every product in cart and push it in productId
 function getProductsId() {
 	let productsId = []
 	let cart = getCart()
@@ -164,7 +194,10 @@ function getProductsId() {
 	return productsId
   }
   
-
+// Send order infos to API if form is valide
+// 		if valide go to confirmation page
+// 		if not and empty cart , alert empty cart
+//		if not valide and cart not empty, alert complete the form
 function submitOrder() {
 	if (validationForm()) {
 		setOrder()
@@ -188,8 +221,9 @@ function submitOrder() {
 		} else {
 			alert('Veuillez renseigner les informations demandées')
 		}
-	}
+	} 
 }
 
+// Set eventlistener on click call submitOrder
 document.getElementById("order").addEventListener('click', submitOrder)
 
